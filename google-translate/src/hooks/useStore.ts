@@ -14,6 +14,7 @@ function reducer (state: typeof initialState, action: Action) {
   const { type } = action
 
   if (type === 'INTERCHANGE_LANGUAGES') {
+    console.log('qonda onqda')
     if (state.fromLanguage === AUTO_LANGUAGE) return state
     return {
       ...state,
