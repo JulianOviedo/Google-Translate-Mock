@@ -6,9 +6,25 @@ import { AUTO_LANGUAGE } from './constants'
 import { useStore } from './hooks/useStore'
 import { LanguageSelector } from './components/LanguageSelector'
 import { TextArea } from './components/TexArea'
+import { useEffect } from 'react'
+import { translate } from './services/translate'
 
 function App () {
   const { loading, result, fromText, fromLanguage, toLanguage, interchangeLanguages, setFromLanguage, setToLanguage, setResult, setFromText } = useStore()
+
+  useEffect(() => {
+    if (fromText === '') return
+
+    translate({ text: fromText, fromLanguage, toLanguage })
+      .then(result => {
+        if (result == null) return
+        setResult(result)
+      })
+      .catch(error => {
+        console.error(error)
+        setResult(error.message)
+      })
+  }, [fromText])
 
   return (
     <Container fluid>
