@@ -35,7 +35,7 @@ function App () {
 
   const handleSpeak = () => {
     const utterance = new SpeechSynthesisUtterance(result)
-    utterance.lang = VOICE_FOR_LANGUAGE[toLanguage]
+    utterance.lang = 'ES-es'
     utterance.rate = 0.9
     speechSynthesis.speak(utterance)
   }
