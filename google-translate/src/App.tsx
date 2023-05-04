@@ -42,7 +42,7 @@ function App () {
 
   return (
     <Container fluid>
-      <h1>Google Translate</h1>
+      <h1 style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>Google Translate</h1>
 
       <Row>
         <Col>
