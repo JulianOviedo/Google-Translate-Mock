@@ -3,7 +3,7 @@ import { SUPPORTED_LANGUAGES } from '../constants'
 import { type FromLanguage, type Language } from '../types'
 
 const apiKey = process.env.VITE_API_KEY
-
+console.log(apiKey)
 const configuration = new Configuration({ apiKey })
 const openai = new OpenAIApi(configuration)
 
