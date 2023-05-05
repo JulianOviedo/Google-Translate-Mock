@@ -1,33 +1,43 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
-import './App.css'
+import { useEffect } from 'react'
 import { Container, Row, Col, Button, Stack } from 'react-bootstrap'
+
+import './App.css'
 import { ArrowsIcon, ClipboardIcon, SpeakerIcon } from './components/Icons'
+import { LanguageSelector } from './components/LanguageSelector'
 import { AUTO_LANGUAGE, VOICE_FOR_LANGUAGE } from './constants'
 import { useStore } from './hooks/useStore'
-import { LanguageSelector } from './components/LanguageSelector'
-import { TextArea } from './components/TexArea'
-import { useEffect } from 'react'
 import { translate } from './services/translate'
+import { SectionType } from './types.d'
 import { useDebouce } from './hooks/useDebounce'
+import { TextArea } from './components/TexArea'
 
 function App () {
-  const { loading, result, fromText, fromLanguage, toLanguage, interchangeLanguages, setFromLanguage, setToLanguage, setResult, setFromText } = useStore()
+  const {
+    loading,
+    fromLanguage,
+    toLanguage,
+    fromText,
+    result,
+    interchangeLanguages,
+    setFromLanguage,
+    setToLanguage,
+    setFromText,
+    setResult
+  } = useStore()
 
-  const debouncedFromText = useDebouce(fromText)
+  const debouncedFromText = useDebouce(fromText, 300)
 
   useEffect(() => {
     if (debouncedFromText === '') return
 
-    translate({ text: debouncedFromText, fromLanguage, toLanguage })
+    translate({ fromLanguage, toLanguage, text: debouncedFromText })
       .then(result => {
         if (result == null) return
         setResult(result)
       })
-      .catch(error => {
-        console.error(error)
-        setResult(error.message)
-      })
-  }, [debouncedFromText])
+      .catch(() => { setResult('Error') })
+  }, [debouncedFromText, fromLanguage, toLanguage])
 
   const handleClipboard = () => {
     navigator.clipboard.writeText(result).catch(() => {})
@@ -35,24 +45,34 @@ function App () {
 
   const handleSpeak = () => {
     const utterance = new SpeechSynthesisUtterance(result)
-    utterance.lang = 'ES-es'
+    utterance.lang = VOICE_FOR_LANGUAGE[toLanguage]
     utterance.rate = 0.9
     speechSynthesis.speak(utterance)
   }
 
   return (
     <Container fluid>
-      <h1 style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>Google Translate</h1>
+      <h2>Google Translate</h2>
 
       <Row>
         <Col>
           <Stack gap={2}>
-            <LanguageSelector onChange={setFromLanguage} value={fromLanguage} />
-            <TextArea value={fromText} onChange={setFromText} autoFocus type='from'/>
+            <LanguageSelector
+              type={SectionType.From}
+              value={fromLanguage}
+              onChange={setFromLanguage}
+            />
+
+            <TextArea
+              type={SectionType.From}
+              value={fromText}
+              onChange={setFromText}
+            />
           </Stack>
+
         </Col>
 
-        <Col xs='auto'>
+        <Col xs='auto' >
           <Button variant='link' disabled={fromLanguage === AUTO_LANGUAGE} onClick={interchangeLanguages}>
             <ArrowsIcon />
           </Button>
@@ -60,12 +80,15 @@ function App () {
 
         <Col>
           <Stack gap={2}>
-
-            <LanguageSelector onChange={setToLanguage} value={toLanguage} />
+            <LanguageSelector
+              type={SectionType.To}
+              value={toLanguage}
+              onChange={setToLanguage}
+            />
             <div style={{ position: 'relative' }}>
             <TextArea
               loading={loading}
-              type='to'
+              type={SectionType.To}
               value={result}
               onChange={setResult}
             />

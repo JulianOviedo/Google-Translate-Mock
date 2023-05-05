@@ -1,6 +1,6 @@
 import { ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi } from 'openai'
 import { SUPPORTED_LANGUAGES } from '../constants'
-import { type fromLanguage, type Language } from '../types.d'
+import { type FromLanguage, type Language } from '../types'
 
 const apiKey = import.meta.env.VITE_API_KEY
 
@@ -12,7 +12,7 @@ export async function translate ({
   toLanguage,
   text
 }: {
-  fromLanguage: fromLanguage
+  fromLanguage: FromLanguage
   toLanguage: Language
   text: string
 }) {
